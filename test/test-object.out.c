@@ -1,10 +1,12 @@
 #define TEST
 #include"../include/sent.h"
+#include<dirent.h>
 
 void error_print(const char *msg) {
     fprintf(stderr,"%s\n", msg);
     exit(1);
 }
+/*
 int makeObject() {
 
 }
@@ -66,5 +68,60 @@ int main(int argc, char *argv[]) {
     int back;
     scanf("%d", &back);
     getIndexFile(back);
+    return 0;
+} */
+
+int readsFile(const char *folder, FLIST *mlist) {
+    int i = 0;
+
+    fileList flist;
+    struct dirent **namelist;
+    int fd;
+    fd = scandir(folder, &namelist, NULL, alphasort);
+    printf("%d\n", fd);
+    if(fd < 0)
+        perror("scandir");
+    else
+    while(i < fd){
+        if(!strcmp(namelist[i]->d_name, ".sent") || !strcmp(namelist[i]->d_name, ".") || !strcmp(namelist[i]->d_name,"..")) {
+            i++; continue;
+        }
+
+        struct stat st;
+        strcat(flist.path_ , folder);
+        strcat(flist.path_, "/");
+        strcat(flist.path_, namelist[i]->d_name);
+
+        if(namelist[i]->d_type == DT_DIR) {
+            readsFile(flist.path_, mlist);
+            i++;
+            continue;
+        }
+        if(stat(flist.path_, &st) != 0)
+            error_print("readfile error");
+
+        struct tm *tmp = localtime(&st.st_mtime);
+        if (tmp == NULL) {
+            error_print("readfeil time error");
+        }
+        flist.time_ = *tmp;
+        cvector_push_back(mlist,&flist);
+        i++;
+    }
+    return 0;
+}
+
+int main() {
+    FLIST flist;
+    readsFile(".", &flist);
+
+    if (flist) {
+		int i;
+		for (i = 0; i < cvector_size(&flist); ++i) {
+			printf("%s\n", flist[i].path_);
+		}
+	}
+    cvector_free(&flist);
+    printf("\nfinished\n");
     return 0;
 }
