@@ -3,7 +3,7 @@ CFLAGS=-g
 
 INC= include/
 SRC= src/
-OBJ= main.o send_cmd.o back_cmd.o buffer.o cache.o user.o
+OBJ= main.o send_cmd.o back_cmd.o buffer.o object.o user.o
 LIB= -lz -lcrypto
 PROG= sent
 
@@ -37,8 +37,8 @@ buffer.o: $(INC)sent.h $(SRC)buffer.c
 	$(CC) -I $(INC) $(CFLAGS) -c $(SRC)/buffer.c
 	@echo $@
 
-cache.o: $(INC)sent.h $(SRC)cache.c
-	$(CC) -I $(INC) $(CFLAGS) -c $(SRC)/cache.c
+object.o: $(INC)sent.h $(SRC)object.c
+	$(CC) -I $(INC) $(CFLAGS) -c $(SRC)/object.c
 	@echo $@
 
 user.o: $(INC)sent.h $(SRC)user.c

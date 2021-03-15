@@ -6,23 +6,24 @@
 #include<string.h>
 
 #include<sys/stat.h>
-#include <sys/mman.h>
+#include<sys/mman.h>
 #include<errno.h>
 #include<unistd.h>
 #include<time.h>
-#include<assert.h>
 #include<fcntl.h>
 
 #include<zlib.h> //https://zlib.net/zlib_how.html
 #include<openssl/sha.h> //https://docs.huihoo.com/doxygen/openssl/1.0.1c/include_2openssl_2sha_8h.html
 
-#include"buffer.h"
-#include"user.h"
-#include"cache.h"
-
 #define SENT_DIR ".sent"
 #define DEFAULT_REPO ".sent/inbox"
+#define DEFAULT_OBJ ".sent/object"
 #define INDEX_FILE ".sent/index"
+
+#include"buffer.h"
+#include"user.h"
+#include"object.h"
+
 
 #define CMD_CNT 4 //cmd numbers
 

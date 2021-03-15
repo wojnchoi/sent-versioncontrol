@@ -1,2 +1,5 @@
 *.o
-*.sent
+*.out
+.sent
+.vscode
+sent

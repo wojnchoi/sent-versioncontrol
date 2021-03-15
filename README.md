@@ -10,7 +10,8 @@ It allows to keep and record the changes of the file.
 ```
 #### cmds
 ```
-mail - start sent database(inbox) 
-send - send files to a repository     
-back - back to a previous(can be specific) repository
+mail   -   start sent database(inbox) 
+send   -   send files to a repository     
+back   -   back to a previous(sha1) repository
+config -   display user
 ```

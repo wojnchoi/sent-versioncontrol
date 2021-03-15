@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
             }
         }
         printf("%s init done\n", SENT_DIR);
-        printf("USER CONFIG SETTING: %s\n", USER_CONFIG);
+        printf("user setting: %s\n", USER_CONFIG);
         printf("NAME: "); scanf("%s[^\n]", name);
         printf("PASSWORD: "); scanf("%d[^\n]", &password);
         if(mkUser(name, password) != 1)
@@ -66,14 +66,12 @@ int main(int argc, char *argv[]) {
         struct stat a;
         stat(SENT_DIR, &a);
         if(!S_ISDIR(a.st_mode))
-            error_print("init sent first..");
+            error_print("init .sent first..");
         
         if(command == 1) { //send
-            updateCache();
             send_cmd();
         } else if(command == 2) { //back
-            //checkHASH
-            //back_cmd();
+            back_cmd();
         } else if(command == 3) { //config
             printf("password: "); scanf(" %d", &password);
             if(checkUser(password) != 1)
