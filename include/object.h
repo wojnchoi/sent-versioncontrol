@@ -1,7 +1,8 @@
 #ifndef OBJECT_H
 #define OBJECT_H
-
-#include"../lib/cvector.h"
+#include<openssl/sha.h> 
+#include"../lib/minizip/include/zip.h"
+#include"cvector.h"
 
 typedef struct {
     char sha[20]; /* inbox */
@@ -25,4 +26,9 @@ typedef struct {
 typedef Vector FLIST;
 extern int readFileList(const char *folder, FLIST *mlist);
 extern int printFileList(FLIST *list);
+
+zipFile zip_;
+extern int zipInit(const char *filename, int append);
+extern int zipMake(const char *root, FLIST *mlist);
+extern int zipFinish();
 #endif /* object.h */

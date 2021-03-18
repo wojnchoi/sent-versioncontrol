@@ -4,16 +4,13 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-
+#include<stdarg.h>
 #include<sys/stat.h>
 #include<sys/mman.h>
 #include<errno.h>
 #include<unistd.h>
 #include<time.h>
 #include<fcntl.h>
-
-#include<zlib.h> //https://zlib.net/zlib_how.html
-#include<openssl/sha.h> //https://docs.huihoo.com/doxygen/openssl/1.0.1c/include_2openssl_2sha_8h.html
 
 #define SENT_DIR ".sent"
 #define DEFAULT_REPO ".sent/inbox"
@@ -27,6 +24,9 @@
 
 #define CMD_CNT 4 //cmd numbers
 
+
+extern int send_cmd();
+extern int back_cmd();
 extern void error_print(const char *msg);
 
 /* 

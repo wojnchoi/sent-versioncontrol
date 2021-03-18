@@ -1,5 +1,6 @@
 #define TEST
 #include"../include/sent.h"
+#include"../lib/minizip/zip.h"
 #include<dirent.h>
 
 void error_print(const char *msg) {
@@ -604,12 +605,14 @@ int createFile(const char *path)
 	}
 	return fd;
 }
+
 int main(int argc, char *argv[]) {
     int back;
     scanf("%d", &back);
     getIndexFile(back);
     return 0;
-} */
+} 
+*/
 
 int readsFileList(const char *folder, FLIST *mlist) {
     int i = 0;
@@ -656,16 +659,53 @@ int printFileList(FLIST *list) {
 	}
     return 0;
 }
+int zipInit(const char *filename,int append) {
+    zip_ = zipOpen(filename, append);
+}
+int zipMake(const char *root, FLIST *mlist) {
+    zip_fileinfo info;
+    memset(&info, 0, sizeof(zip_fileinfo));
+
+    int len = strlen(root);
+    char buf[1024];   
+    size_t readSize;
+
+    VECTOR_FOR_EACH(mlist, i) {
+        fileList path = ITERATOR_GET_AS(fileList, &i);
+        info.tmz_date.tm_hour = path.time_.tm_hour;
+        info.tmz_date.tm_mday = path.time_.tm_mday;
+        info.tmz_date.tm_min = path.time_.tm_min;
+        info.tmz_date.tm_mon = path.time_.tm_mon;
+        info.tmz_date.tm_sec = path.time_.tm_sec;
+        info.tmz_date.tm_year = path.time_.tm_year;
+
+        char *m;
+        strncpy(m, path.path_, strlen(path.path_));
+        zipOpenNewFileInZip(zip_,m+len,&info, NULL, 0, NULL, 0, NULL,Z_DEFLATED, Z_BEST_SPEED);
+        
+        FILE *fp = fopen(m, "rb");
+
+        do {
+            readSize = fread(buf,1024, sizeof(char),fp);
+            zipWriteInFileInZip(zip_,buf,readSize);
+        }while(readSize != EOF);
+        printf("compressed : %s \n", m);
+        fclose(fp);
+        zipCloseFileInZip(zip_);
+	}
+}
+int zipFinish() {
+    zipClose(zip_, "");
+}
+zipFile zip_;
 int main() {
     FLIST flist;
     vector_setup(&flist, 10, sizeof(fileList));
-    readsFileList("..", &flist);
+    readsFileList(".", &flist);
 
-    VECTOR_FOR_EACH(&flist, i) {
-        fileList path = ITERATOR_GET_AS(fileList, &i);
-        printf("%s\n", path.path_);
-		
-	}
+	zipInit("hello.zip", APPEND_STATUS_CREATE);
+	zipMake(".", &flist);
+	zipFinish(zip_);
     vector_clear(&flist);
 	vector_destroy(&flist);
     printf("\nfinished\n");

@@ -3,8 +3,9 @@ CFLAGS=-g
 
 INC= include/
 SRC= src/
-OBJ= main.o send_cmd.o back_cmd.o buffer.o object.o user.o
-LIB= -lz -lcrypto
+LIB= lib/
+OBJ= main.o send_cmd.o back_cmd.o buffer.o object.o user.o cvector.o
+LIN= -lz -lcrypto
 PROG= sent
 
 
@@ -18,7 +19,7 @@ install: $(PROG)
 	install $(PROG) $(INSTALL_PATH)
 
 sent: $(OBJ)
-	$(CC)  -o $@ $^ $(LIB) 
+	$(CC)  -o $@ $^ $(LIN) -I $(LIB)minizip/include/ $(LIB)/minizip/src/*.c 
 	@echo "Building for $(shell uname)"
 
 main.o: $(INC)sent.h main.c
@@ -38,12 +39,16 @@ buffer.o: $(INC)sent.h $(SRC)buffer.c
 	@echo $@
 
 object.o: $(INC)sent.h $(SRC)object.c
-	$(CC) -I $(INC) $(CFLAGS) -c $(SRC)/object.c
+	$(CC)  -I$(INC)  $(CFLAGS) -c $(SRC)object.c
 	@echo $@
 
 user.o: $(INC)sent.h $(SRC)user.c
 	$(CC) -I $(INC) $(CFLAGS) -c $(SRC)/user.c
 	@echo $@
+
+cvector.o: $(INC)cvector.h $(LIB)cvector.c 
+	$(CC) -I $(INC) $(CFLAGS) -c $(LIB)cvector.c
+
 
 clean:
 	-rm -f *.o -r .sent $(PROG)
