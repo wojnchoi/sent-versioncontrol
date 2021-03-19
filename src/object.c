@@ -71,17 +71,15 @@ int updateIndexFile(char *sha1) {
 int restoreObject() {
 
 }
-int getIndexFile(int back) {
+int getIndexFile(char t, char buf[]) {
 	int fd = open(INDEX_FILE, O_RDONLY, 0600);
     if(fd < 0)
 		error_print("cannot open index");
 
-    char buf[21];
-    lseek(fd, -20*back, SEEK_END);
-    read(fd, buf, 20);
-    for(int i = 0; i< 20; i++) {
-        printf("%c", buf[i]);
-    }
+    int back = t - '0';
+    lseek(fd, -21*back, SEEK_END);
+    read(fd, buf, 21);
+    buf[20] = '\0';
     close(fd);
     return 0;
 }

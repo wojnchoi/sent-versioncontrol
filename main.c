@@ -70,16 +70,25 @@ int main(int argc, char *argv[]) {
         
         if(command == 1) { //send
             char *sha1path = (char*)malloc(sizeof(char)*32); 
+            char *sha1 = (char*)malloc(sizeof(char)*20);
+            strncpy(sha1, sha1filename(), 20);
             int len = strlen(DEFAULT_REPO);
             strncpy(sha1path,DEFAULT_REPO, len);
             sha1path[len] = '/';
-            strncpy(sha1path+len+1, sha1filename(), 20);
+            strncpy(sha1path+len+1, sha1, 20);
             strncat(sha1path, ".zip", strlen(".zip"));
             makeObject(sha1path);
-            updateIndexFile(sha1path);
-            printf("SHA1 :%s\n", sha1path);
+            printf("path :%s\n", DEFAULT_REPO);
+            printf("sha1 :%s\n", sha1);
+            updateIndexFile(sha1);
+            free(sha1path);
+            free(sha1);
         } else if(command == 2) { //back
-            back_cmd();
+            if(argc < 3)
+                error_print("how many objects to go back?\n ./sent back [num]\n num : number of times(objects) to go back");
+            char sha1[20];
+            getIndexFile(*(argv[2]), sha1);
+            printf("restore sha1: %s\n", sha1);
         } else if(command == 3) { //config
             printf("password: "); scanf(" %d", &password);
             if(checkUser(password) != 1)

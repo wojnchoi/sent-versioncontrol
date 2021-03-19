@@ -21,10 +21,10 @@ extern int zipFinish();
 extern char *sha1filename();
 /* write */
 extern int updateIndexFile(char *sha1);
-extern int makeObject();
+// extern int makeObject();
 
 /* read */
-extern int getIndexFile(int back);
-extern int restoreObject();
+extern int getIndexFile(char t, char buf[]);
+// extern int restoreObject();
 
 #endif /* object.h */
