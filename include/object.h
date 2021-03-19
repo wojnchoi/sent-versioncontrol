@@ -4,20 +4,6 @@
 #include"../lib/minizip/include/zip.h"
 #include"cvector.h"
 
-typedef struct {
-    char sha[20]; /* inbox */
-    char obj[20]; /* object */
-    bufstrType *msg;
-}commit;
-
-/* write */
-extern int updateIndexFile(char *sha1);
-extern int makeObject();
-
-/* read */
-extern int getIndexFile(int back);
-extern int restoreObject();
-
 /* file */
 typedef struct {
     char path_[32];
@@ -31,4 +17,14 @@ zipFile zip_;
 extern int zipInit(const char *filename, int append);
 extern int zipMake(const char *root, FLIST *mlist);
 extern int zipFinish();
+
+extern char *sha1filename();
+/* write */
+extern int updateIndexFile(char *sha1);
+extern int makeObject();
+
+/* read */
+extern int getIndexFile(int back);
+extern int restoreObject();
+
 #endif /* object.h */

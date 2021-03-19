@@ -69,20 +69,15 @@ int main(int argc, char *argv[]) {
             error_print("init .sent first..");
         
         if(command == 1) { //send
-            FLIST flist;
-            vector_setup(&flist, 10, sizeof(fileList));
-            readFileList(".", &flist);
-            VECTOR_FOR_EACH(&flist, i) {
-                fileList path = ITERATOR_GET_AS(fileList, &i);
-                printf("%s\n", path.path_);
-            }
-            zipInit(".sent/inbox/hello.zip", APPEND_STATUS_CREATE);
-            zipMake("./", &flist);
-            zipFinish(zip_);
-            vector_clear(&flist);
-            vector_destroy(&flist);
-            printf("\nfinished\n");
-            send_cmd();
+            char *sha1path = (char*)malloc(sizeof(char)*32); 
+            int len = strlen(DEFAULT_REPO);
+            strncpy(sha1path,DEFAULT_REPO, len);
+            sha1path[len] = '/';
+            strncpy(sha1path+len+1, sha1filename(), 20);
+            strncat(sha1path, ".zip", strlen(".zip"));
+            makeObject(sha1path);
+            updateIndexFile(sha1path);
+            printf("SHA1 :%s\n", sha1path);
         } else if(command == 2) { //back
             back_cmd();
         } else if(command == 3) { //config

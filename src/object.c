@@ -1,8 +1,59 @@
 #include<dirent.h>
-
 #include"sent.h"
-int makeObject() {
 
+static char *rand_string(char *str, size_t size) {
+    const char charset[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJK...";
+    if (size) {
+        --size;
+        for (size_t n = 0; n < size; n++) {
+            int key = rand() % (int) (sizeof charset - 1);
+            str[n] = charset[key];
+        }
+        str[size] = '\0';
+    }
+    return str;
+}
+char * sha1_to_zipname(unsigned char *sha1)
+{
+	static char buffer[50];
+	static const char hex[] = "0123456789abcdef";
+	char *buf = buffer;
+	int i;
+
+	for (i = 0; i < 20; i++) {
+		unsigned int val = *sha1++;
+		*buf++ = hex[val >> 4];
+		*buf++ = hex[val & 0xf];
+	}
+    
+	return buffer;
+}
+char *sha1filename() {
+    SHA_CTX c;
+    time_t t;
+    srand((unsigned) time(&t));
+    char *sha1 = (char*)malloc(sizeof(char)*20);
+    const size_t bufsize = rand() % 10;
+ 	char *buf = (char*)malloc(sizeof(char) * bufsize);
+    rand_string(buf, bufsize);
+    SHA1_Init(&c);
+    SHA1_Update(&c,buf, bufsize);
+    SHA1_Final(sha1, &c);
+    return sha1_to_zipname(sha1);
+}
+int makeObject(const char *sha1) {
+    FLIST flist;
+    vector_setup(&flist, 10, sizeof(fileList));
+    readFileList(".", &flist);
+    
+    zipInit(sha1, APPEND_STATUS_CREATE);
+    zipMake("./", &flist);
+    zipFinish(zip_);
+
+    vector_clear(&flist);
+    vector_destroy(&flist);
+    printf("object finished\n");
+    return 0;
 }
 int updateIndexFile(char *sha1) {
 	int fd;
