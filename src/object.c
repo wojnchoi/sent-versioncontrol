@@ -98,7 +98,7 @@ int readFileList(const char *folder, FLIST *mlist) {
         perror("scandir");
     else
     while(i < fd){
-        if(!strcmp(namelist[i]->d_name, ".git") ||!strcmp(namelist[i]->d_name, ".sent") || !strcmp(namelist[i]->d_name, ".") || !strcmp(namelist[i]->d_name,"..")) {
+        if(!strcmp(namelist[i]->d_name, ".git") ||!strcmp(namelist[i]->d_name, ".sent") || !strcmp(namelist[i]->d_name, ".") || !strcmp(namelist[i]->d_name,"..") || !strcmp(namelist[i]->d_name,"sent")) {
             i++; continue;
         }
 
@@ -191,6 +191,9 @@ int unzipMake(const char *root) {
         strcpy(filepath, root);
         strcat(filepath, filename);
         mkdir(filepath,0666);
+        if (remove(filepath) == 0) {
+        printf("old file is deleted.   ");
+        }
         int fd = open(filepath, O_RDWR | O_CREAT);
         if(fd < 0) {
             printf("file failed unzip\n");
@@ -204,7 +207,7 @@ int unzipMake(const char *root) {
         }while(info.uncompressed_size != 0);
         unzCloseCurrentFile(unzip_);
         close(fd);
-        printf("uncompressed %s\n",filepath);
+        printf("compressed %s\n",filepath);
     }while(UNZ_OK == unzGoToNextFile(unzip_));
 }
 int unzipFinish() {
