@@ -2,6 +2,7 @@
 #define OBJECT_H
 #include<openssl/sha.h> 
 #include"../lib/minizip/include/zip.h"
+#include"../lib/minizip/include/unzip.h"
 #include"cvector.h"
 
 /* file */
@@ -14,17 +15,22 @@ extern int readFileList(const char *folder, FLIST *mlist);
 extern int printFileList(FLIST *list);
 
 zipFile zip_;
+unzFile unzip_;
 extern int zipInit(const char *filename, int append);
 extern int zipMake(const char *root, FLIST *mlist);
 extern int zipFinish();
 
+extern int unzipInit(char *filename);
+extern int unzipMake(const char *root);
+extern int unzipFinish();
+
 extern char *sha1filename();
 /* write */
 extern int updateIndexFile(char *sha1);
-// extern int makeObject();
+extern int makeObject();
 
 /* read */
 extern int getIndexFile(char t, char buf[]);
-// extern int restoreObject();
+extern int restoreObject();
 
 #endif /* object.h */

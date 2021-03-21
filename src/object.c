@@ -52,7 +52,7 @@ int makeObject(const char *sha1) {
 
     vector_clear(&flist);
     vector_destroy(&flist);
-    printf("object finished\n");
+    printf("object is made\n");
     return 0;
 }
 int updateIndexFile(char *sha1) {
@@ -68,8 +68,12 @@ int updateIndexFile(char *sha1) {
 
 }
 
-int restoreObject() {
-
+int restoreObject(char *sha1) {
+    unzipInit(sha1);
+    unzipMake("./");
+    printf("obejct is restored\n");
+    unzipFinish();
+    return 0;
 }
 int getIndexFile(char t, char buf[]) {
 	int fd = open(INDEX_FILE, O_RDONLY, 0600);
@@ -168,4 +172,41 @@ int zipMake(const char *root, FLIST *mlist) {
 }
 int zipFinish() {
     zipClose(zip_, "");
+}
+
+int unzipInit(char *filename) {
+    unzip_ = unzOpen(filename);
+}
+int unzipMake(const char *root) {
+    int ret = unzGoToFirstFile(unzip_);
+    if(UNZ_OK != ret) return -1;
+
+    unz_file_info info;
+    char filename[256];
+    char filepath[32];
+    char buf[1024];
+    size_t readSize = 0;
+    do {
+        unzGetCurrentFileInfo(unzip_, &info,filename, 256,NULL,0,NULL,0);
+        strcpy(filepath, root);
+        strcat(filepath, filename);
+        mkdir(filepath,0666);
+        int fd = open(filepath, O_RDWR | O_CREAT);
+        if(fd < 0) {
+            printf("file failed unzip\n");
+            continue;
+        }
+        unzOpenCurrentFile(unzip_);
+        do {
+            readSize = unzReadCurrentFile(unzip_, buf,1024);
+            info.uncompressed_size -= readSize;
+            write(fd, buf, readSize);
+        }while(info.uncompressed_size != 0);
+        unzCloseCurrentFile(unzip_);
+        close(fd);
+        printf("uncompressed %s\n",filepath);
+    }while(UNZ_OK == unzGoToNextFile(unzip_));
+}
+int unzipFinish() {
+    unzClose(unzip_);
 }
